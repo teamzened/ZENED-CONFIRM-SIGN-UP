@@ -1,0 +1,46 @@
+confirm.html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Zened - Confirming Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:#f5f5f5;">
+
+  <div style="background:white;padding:30px;border-radius:10px;width:320px;text-align:center;">
+
+    <h2>Confirming your account</h2>
+
+    <p id="status">Please wait while we activate your account...</p>
+
+    <div id="success" style="display:none;">
+      <h3 style="color:green;">Account confirmed</h3>
+      <p>You can now sign in to Zened.</p>
+      <a href="/" style="display:inline-block;margin-top:10px;padding:10px 15px;background:black;color:white;text-decoration:none;border-radius:6px;">
+        Go to app
+      </a>
+    </div>
+
+    <div id="error" style="display:none;color:red;">
+      <h3>Link expired or invalid</h3>
+      <p>Please request a new confirmation email.</p>
+    </div>
+
+  </div>
+
+  <script>
+    // This page just handles Supabase redirect states
+    const hash = window.location.hash;
+
+    if (hash.includes("access_token")) {
+      document.getElementById("status").style.display = "none";
+      document.getElementById("success").style.display = "block";
+    } else {
+      document.getElementById("status").style.display = "none";
+      document.getElementById("error").style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
