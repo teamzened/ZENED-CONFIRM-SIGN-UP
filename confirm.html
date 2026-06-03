@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Zened - Confirming Account</title>
+  <title>Zened - Confirm Account</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -10,11 +10,10 @@
   <div style="background:white;padding:30px;border-radius:10px;width:320px;text-align:center;">
 
     <h2>Confirming your account</h2>
-
-    <p id="status">Please wait while we activate your account...</p>
+    <p id="status">Please wait while we verify your email...</p>
 
     <div id="success" style="display:none;">
-      <h3 style="color:green;">Account confirmed</h3>
+      <h3 style="color:green;">Account confirmed 🎉</h3>
       <p>You can now sign in to Zened.</p>
       <a href="/" style="display:inline-block;margin-top:10px;padding:10px 15px;background:black;color:white;text-decoration:none;border-radius:6px;">
         Go to app
@@ -28,17 +27,32 @@
 
   </div>
 
-  <script>
-    // This page just handles Supabase redirect states
-    const hash = window.location.hash;
+  <!-- SUPABASE AUTH LOGIC -->
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    if (hash.includes("access_token")) {
+    // 🔴 REPLACE THESE
+    const supabaseUrl = "https://YOUR_PROJECT.supabase.co";
+    const supabaseKey = "YOUR_ANON_KEY";
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function handleAuth() {
+      const { error } = await supabase.auth.getSessionFromUrl({
+        storeSession: true
+      });
+
       document.getElementById("status").style.display = "none";
-      document.getElementById("success").style.display = "block";
-    } else {
-      document.getElementById("status").style.display = "none";
-      document.getElementById("error").style.display = "block";
+
+      if (error) {
+        document.getElementById("error").style.display = "block";
+        console.log("Auth error:", error.message);
+      } else {
+        document.getElementById("success").style.display = "block";
+      }
     }
+
+    handleAuth();
   </script>
 
 </body>
