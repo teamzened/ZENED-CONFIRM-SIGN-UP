@@ -1,58 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Zened - Confirm Account</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zened Auth</title>
 </head>
 
-<body style="font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:#f5f5f5;">
+<body style="font-family: Arial; padding: 20px;">
 
-  <div style="background:white;padding:30px;border-radius:10px;width:320px;text-align:center;">
+  <h2>Sign up</h2>
 
-    <h2>Confirming your account</h2>
-    <p id="status">Please wait while we verify your email...</p>
+  <input id="email" placeholder="email" />
+  <input id="password" type="password" placeholder="password" />
+  <button onclick="signUp()">Sign up</button>
 
-    <div id="success" style="display:none;">
-      <h3 style="color:green;">Account confirmed 🎉</h3>
-      <p>You can now sign in to Zened.</p>
-      <a href="/" style="display:inline-block;margin-top:10px;padding:10px 15px;background:black;color:white;text-decoration:none;border-radius:6px;">
-        Go to app
-      </a>
-    </div>
+  <p id="status"></p>
 
-    <div id="error" style="display:none;color:red;">
-      <h3>Link expired or invalid</h3>
-      <p>Please request a new confirmation email.</p>
-    </div>
+  <hr />
 
-  </div>
+  <h2>Confirming...</h2>
+  <p id="confirm-status">Waiting for email link...</p>
 
-  <!-- SUPABASE AUTH LOGIC -->
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // 🔴 REPLACE THESE
-    const supabaseUrl = "https://YOUR_PROJECT.supabase.co";
-    const supabaseKey = "YOUR_ANON_KEY";
+    const supabase = createClient(
+      "YOUR_SUPABASE_URL",
+      "YOUR_SUPABASE_ANON_KEY"
+    )
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // -----------------------
+    // SIGN UP FUNCTION
+    // -----------------------
+    window.signUp = async function () {
+      const email = document.getElementById("email").value
+      const password = document.getElementById("password").value
 
-    async function handleAuth() {
-      const { error } = await supabase.auth.getSessionFromUrl({
-        storeSession: true
-      });
-
-      document.getElementById("status").style.display = "none";
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.href
+        }
+      })
 
       if (error) {
-        document.getElementById("error").style.display = "block";
-        console.log("Auth error:", error.message);
+        document.getElementById("status").innerText = error.message
       } else {
-        document.getElementById("success").style.display = "block";
+        document.getElementById("status").innerText =
+          "Check your email to confirm"
       }
     }
 
-    handleAuth();
+    // -----------------------
+    // HANDLE CONFIRM LINK
+    // -----------------------
+    async function handleConfirm() {
+      const { data, error } =
+        await supabase.auth.exchangeCodeForSession(window.location.href)
+
+      if (error) {
+        document.getElementById("confirm-status").innerText =
+          "No valid confirmation link"
+      } else {
+        document.getElementById("confirm-status").innerText =
+          "Account confirmed! You are logged in."
+      }
+    }
+
+    handleConfirm()
   </script>
 
 </body>
