@@ -1,23 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Zened Auth</title>
+  <title>Zened - Confirming</title>
 </head>
 
-<body style="font-family: Arial; padding: 20px;">
-
-  <h2>Sign up</h2>
-
-  <input id="email" placeholder="email" />
-  <input id="password" type="password" placeholder="password" />
-  <button onclick="signUp()">Sign up</button>
-
-  <p id="status"></p>
-
-  <hr />
-
-  <h2>Confirming...</h2>
-  <p id="confirm-status">Waiting for email link...</p>
+<body style="font-family: Arial; text-align:center; padding-top:100px;">
+  <h2 id="status">Confirming your account...</h2>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -27,47 +15,32 @@
       "YOUR_SUPABASE_ANON_KEY"
     )
 
-    // -----------------------
-    // SIGN UP FUNCTION
-    // -----------------------
-    window.signUp = async function () {
-      const email = document.getElementById("email").value
-      const password = document.getElementById("password").value
+    async function run() {
+      console.log("Confirm page loaded")
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.href
-        }
-      })
-
-      if (error) {
-        document.getElementById("status").innerText = error.message
-      } else {
-        document.getElementById("status").innerText =
-          "Check your email to confirm"
-      }
-    }
-
-    // -----------------------
-    // HANDLE CONFIRM LINK
-    // -----------------------
-    async function handleConfirm() {
       const { data, error } =
         await supabase.auth.exchangeCodeForSession(window.location.href)
 
       if (error) {
-        document.getElementById("confirm-status").innerText =
-          "No valid confirmation link"
-      } else {
-        document.getElementById("confirm-status").innerText =
-          "Account confirmed! You are logged in."
+        console.error("Auth error:", error)
+
+        document.getElementById("status").innerText =
+          "Link expired or invalid"
+
+        return
       }
+
+      console.log("Session created:", data)
+
+      document.getElementById("status").innerText =
+        "Account confirmed! Redirecting..."
+
+      setTimeout(() => {
+        window.location.href = "/"
+      }, 1500)
     }
 
-    handleConfirm()
+    run()
   </script>
-
 </body>
 </html>
