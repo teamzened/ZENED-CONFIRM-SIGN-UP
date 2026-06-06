@@ -1,11 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Zened - Confirming</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zened</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+      background: #0b0f14;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .card {
+      max-width: 320px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 15px;
+      color: #9aa4b2;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .loader {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #2b3440;
+      border-top: 3px solid #4da3ff;
+      border-radius: 50%;
+      margin: 0 auto 20px auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error {
+      color: #ff6b6b;
+    }
+
+    .success {
+      color: #4da3ff;
+    }
+  </style>
 </head>
 
-<body style="font-family: Arial; text-align:center; padding-top:100px;">
-  <h2 id="status">Confirming your account...</h2>
+<body>
+
+  <div class="card">
+    <div class="loader" id="loader"></div>
+    <h1 id="status">Confirming your account</h1>
+    <p id="subtext">Please wait while we securely log you in</p>
+  </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -15,32 +77,44 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhc3VtbmRyZ2hjcmt4ZHlzbWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1ODg2NTUsImV4cCI6MjA5NDE2NDY1NX0.l7nuTRv-pP2BcTLmG2tdgoHDPeQFzGF9zMnfGr_kOv0"
     )
 
-    async function run() {
-      console.log("Confirm page loaded")
+    async function runAuth() {
+      const status = document.getElementById("status")
+      const subtext = document.getElementById("subtext")
+      const loader = document.getElementById("loader")
 
-      const { data, error } =
-        await supabase.auth.exchangeCodeForSession(window.location.href)
+      try {
+        const { data, error } =
+          await supabase.auth.exchangeCodeForSession(window.location.href)
 
-      if (error) {
-        console.error("Auth error:", error)
+        if (error) {
+          console.log(error)
+          loader.style.display = "none"
+          status.innerText = "Link expired"
+          subtext.innerText = "Please request a new email link"
+          subtext.classList.add("error")
+          return
+        }
 
-        document.getElementById("status").innerText =
-          "Link expired or invalid"
+        loader.style.borderTop = "3px solid #4da3ff"
+        status.innerText = "Success"
+        subtext.innerText = "Redirecting you into Zened..."
+        subtext.classList.add("success")
 
-        return
+        setTimeout(() => {
+          window.location.href = "/"
+        }, 1200)
+
+      } catch (err) {
+        console.log(err)
+        loader.style.display = "none"
+        status.innerText = "Something went wrong"
+        subtext.innerText = "Please try again"
+        subtext.classList.add("error")
       }
-
-      console.log("Session created:", data)
-
-      document.getElementById("status").innerText =
-        "Account confirmed! Redirecting..."
-
-      setTimeout(() => {
-        window.location.href = "/"
-      }, 1500)
     }
 
-    run()
+    runAuth()
   </script>
+
 </body>
 </html>
