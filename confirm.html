@@ -8,18 +8,18 @@
   <style>
     body {
       margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       background: #0b0b0f;
       color: white;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
     }
 
-    .spinner {
-      width: 42px;
-      height: 42px;
+    .loader {
+      width: 45px;
+      height: 45px;
       border: 3px solid rgba(255,255,255,0.2);
       border-top: 3px solid white;
       border-radius: 50%;
@@ -27,21 +27,14 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .error {
-      text-align: center;
-      opacity: 0.7;
-      font-size: 14px;
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 
 <body>
 
-  <div id="loader" class="spinner"></div>
-  <div id="error" class="error" style="display:none;"></div>
+  <div class="loader"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -51,45 +44,20 @@
 
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function handleConfirm() {
-      try {
-        console.log("Confirm page loaded");
-        console.log("URL:", window.location.href);
+    async function handleAuth() {
+      const { error } =
+        await supabase.auth.exchangeCodeForSession(window.location.href);
 
-        const url = window.location.href;
-
-        
-        if (!url.includes("code=")) {
-          showError("Invalid or expired confirmation link.");
-          return;
-        }
-
-        
-        const { error } = await supabase.auth.exchangeCodeForSession(url);
-
-        if (error) {
-          console.log("Auth error:", error);
-          showError("Link expired or invalid. Please request a new email.");
-          return;
-        }
-
-        
-        window.location.href = "/";
-
-      } catch (err) {
-        console.log("Fatal error:", err);
-        showError("Something went wrong. Please try again.");
+      if (error) {
+        console.log(error.message);
+        document.body.innerHTML = "<p>Authentication failed</p>";
+        return;
       }
+
+      window.location.href = "/";
     }
 
-    function showError(msg) {
-      document.getElementById("loader").style.display = "none";
-      const errorBox = document.getElementById("error");
-      errorBox.style.display = "block";
-      errorBox.innerText = msg;
-    }
-
-    handleConfirm();
+    handleAuth();
   </script>
 
 </body>
