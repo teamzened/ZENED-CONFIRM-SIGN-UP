@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Zened</title>
 
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       background: #0b0b0f;
       color: white;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -18,8 +18,8 @@
     }
 
     .spinner {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border: 3px solid rgba(255,255,255,0.2);
       border-top: 3px solid white;
       border-radius: 50%;
@@ -29,12 +29,19 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .error {
+      text-align: center;
+      opacity: 0.7;
+      font-size: 14px;
+    }
   </style>
 </head>
 
 <body>
 
-  <div class="spinner"></div>
+  <div id="loader" class="spinner"></div>
+  <div id="error" class="error" style="display:none;"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -44,12 +51,45 @@
 
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function confirmUser() {
-      await supabase.auth.exchangeCodeForSession(window.location.href);
-      window.location.href = "/";
+    async function handleConfirm() {
+      try {
+        console.log("Confirm page loaded");
+        console.log("URL:", window.location.href);
+
+        const url = window.location.href;
+
+        
+        if (!url.includes("code=")) {
+          showError("Invalid or expired confirmation link.");
+          return;
+        }
+
+        
+        const { error } = await supabase.auth.exchangeCodeForSession(url);
+
+        if (error) {
+          console.log("Auth error:", error);
+          showError("Link expired or invalid. Please request a new email.");
+          return;
+        }
+
+        
+        window.location.href = "/";
+
+      } catch (err) {
+        console.log("Fatal error:", err);
+        showError("Something went wrong. Please try again.");
+      }
     }
 
-    confirmUser();
+    function showError(msg) {
+      document.getElementById("loader").style.display = "none";
+      const errorBox = document.getElementById("error");
+      errorBox.style.display = "block";
+      errorBox.innerText = msg;
+    }
+
+    handleConfirm();
   </script>
 
 </body>
