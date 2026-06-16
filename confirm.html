@@ -2,83 +2,152 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Zened</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zened — Confirm your email</title>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      margin: 0;
-      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+      background: #f5f0ea;
+      color: #2c2c2e;
       display: flex;
-      justify-content: center;
       align-items: center;
-      background: #0b0b0f;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
     }
 
-    .loader {
-      width: 45px;
-      height: 45px;
-      border: 3px solid rgba(255,255,255,0.2);
-      border-top: 3px solid white;
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 48px 36px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+    }
+
+    .icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c2c2e;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    p {
+      font-size: 15px;
+      color: #6c6c70;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #6b8f71;
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+
+    .error {
+      color: #c0392b;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 3px solid #e5e0d8;
+      border-top-color: #6b8f71;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
     }
 
     @keyframes spin {
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
-
 <body>
-
-  <div class="loader"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <div class="card" id="card">
+    <div class="spinner"></div>
+    <p>Confirming your account…</p>
+  </div>
 
   <script>
-    const supabaseUrl = "https://basumndrghcrkxdysmdn.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhc3VtbmRyZ2hjcmt4ZHlzbWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1ODg2NTUsImV4cCI6MjA5NDE2NDY1NX0.l7nuTRv-pP2BcTLmG2tdgoHDPeQFzGF9zMnfGr_kOv0";
+    (function () {
+      var hash  = window.location.hash.substring(1);
+      var query = window.location.search.substring(1);
 
-   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-    async function handleAuth() {
-      try {
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-
-        const access_token = params.get("access_token");
-        const refresh_token = params.get("refresh_token");
-
-        if (!access_token || !refresh_token) {
-          console.log("No tokens found in URL");
-          document.body.innerHTML = "<p>Invalid or expired link</p>";
-          return;
-        }
-
-        const { error } = await supabase.auth.setSession({
-          access_token,
-          refresh_token
+      function parseParams(str) {
+        var params = {};
+        str.split("&").forEach(function (pair) {
+          var parts = pair.split("=");
+          if (parts.length === 2) {
+            params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+          }
         });
-
-        if (error) {
-          console.log("Session error:", error.message);
-          document.body.innerHTML = "<p>Authentication failed</p>";
-          return;
-        }
-
-        window.location.href = "/";
-
-      } catch (err) {
-        console.log(err);
-        document.body.innerHTML = "<p>Something went wrong</p>";
+        return params;
       }
-    }
 
-    handleAuth();
+      var hashParams  = parseParams(hash);
+      var queryParams = parseParams(query);
+      var params = Object.keys(hashParams).length ? hashParams : queryParams;
+
+      var accessToken  = params["access_token"]  || params["token"];
+      var refreshToken = params["refresh_token"] || "";
+      var type         = params["type"]           || "signup";
+
+      function showError(msg) {
+        document.getElementById("card").innerHTML =
+          '<span class="icon">⚠️</span>' +
+          '<h1>Link expired</h1>' +
+          '<p>' + msg + '</p>' +
+          '<p class="error">Please sign up again or request a new confirmation email in the Zened app.</p>';
+      }
+
+      function showSuccess(deepLink) {
+        document.getElementById("card").innerHTML =
+          '<span class="icon">🌿</span>' +
+          '<h1>You\'re confirmed!</h1>' +
+          '<p>Your Zened account is ready. Tap below to open the app and begin reflecting.</p>' +
+          '<a class="btn" href="' + deepLink + '">Open Zened</a>';
+      }
+
+      if (!accessToken) {
+        showError("No confirmation token was found in this link.");
+        return;
+      }
+
+      var deepLink = "zened://confirm" +
+        "?access_token="  + encodeURIComponent(accessToken) +
+        "&refresh_token=" + encodeURIComponent(refreshToken) +
+        "&type="          + encodeURIComponent(type);
+
+      window.location.href = deepLink;
+
+      setTimeout(function () {
+        showSuccess(deepLink);
+      }, 800);
+    })();
   </script>
-
 </body>
 </html>
