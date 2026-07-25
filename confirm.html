@@ -3,151 +3,648 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zened — Confirm your email</title>
+  <title>Zened — Your money, your moments.</title>
+  <meta name="description" content="Most finance apps tell you what you spent. Zened asks you why." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #F2EDE4;
+      --cream-dark: #E8E0D4;
+      --ink: #1C1C1A;
+      --ink-soft: #4A4A44;
+      --sage: #6B8F71;
+      --sage-light: #8FAF95;
+      --sage-faint: #EAF0EB;
+      --white: #FDFCFA;
+    }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-      background: #f5f0ea;
-      color: #2c2c2e;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 40px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 24px;
+      justify-content: space-between;
+      background: rgba(242, 237, 228, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
-    .card {
-      background: #fff;
-      border-radius: 24px;
-      padding: 48px 36px;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.08);
-    }
-
-    .icon {
-      font-size: 48px;
-      margin-bottom: 20px;
-      display: block;
-    }
-
-    h1 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #2c2c2e;
-      margin-bottom: 10px;
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--ink);
+      text-decoration: none;
       letter-spacing: -0.3px;
     }
 
-    p {
-      font-size: 15px;
-      color: #6c6c70;
-      line-height: 1.6;
+    .nav-logo span { color: var(--sage); }
+
+    .nav-link {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--ink-soft);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover { color: var(--ink); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 40px 80px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(48px, 8vw, 96px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: var(--ink);
+      max-width: 900px;
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-headline em {
+      font-style: italic;
+      color: var(--sage);
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--ink-soft);
+      max-width: 480px;
+      margin: 24px auto 48px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-cta {
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--ink);
+      color: var(--cream);
+      text-decoration: none;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.2px;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--sage);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .hero-caption {
+      font-size: 13px;
+      color: var(--ink-soft);
+      opacity: 0.6;
+    }
+
+    /* SCROLL INDICATOR */
+    .scroll-line {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--sage), transparent);
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 1.2s;
+    }
+
+    /* PHILOSOPHY SECTION */
+    .philosophy {
+      padding: 120px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 48px;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .philosophy-statement {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: var(--ink);
+    }
+
+    .philosophy-statement em {
+      font-style: italic;
+      color: var(--sage);
+    }
+
+    .philosophy-body {
+      padding-top: 8px;
+    }
+
+    .philosophy-body p {
+      font-size: 16px;
+      color: var(--ink-soft);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .philosophy-body p:last-child { margin-bottom: 0; }
+
+    /* BELIEFS SECTION */
+    .beliefs {
+      background: var(--ink);
+      padding: 120px 40px;
+    }
+
+    .beliefs-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .beliefs .section-label {
+      color: var(--sage-light);
+    }
+
+    .beliefs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+      margin-top: 64px;
+    }
+
+    .belief-item {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 32px;
+    }
+
+    .belief-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--sage-faint);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .belief-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--sage);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .belief-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--white);
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+
+    .belief-text {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* MOMENT SECTION — signature element */
+    .moment-section {
+      padding: 120px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .moment-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.06);
+      position: relative;
+    }
+
+    .moment-tag {
+      display: inline-block;
+      background: var(--sage-faint);
+      color: var(--sage);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .moment-amount {
+      font-family: 'DM Serif Display', serif;
+      font-size: 42px;
+      color: var(--ink);
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .moment-desc {
+      font-size: 14px;
+      color: var(--ink-soft);
       margin-bottom: 28px;
     }
 
-    .btn {
-      display: inline-block;
-      background: #6b8f71;
-      color: #fff;
-      text-decoration: none;
-      padding: 14px 32px;
-      border-radius: 50px;
+    .moment-feelings {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .feeling-chip {
+      background: var(--cream);
+      color: var(--ink-soft);
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .feeling-chip.active {
+      background: var(--sage);
+      color: white;
+    }
+
+    .moment-insight {
+      border-top: 1px solid var(--cream-dark);
+      padding-top: 20px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .moment-insight strong {
+      color: var(--sage);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .moment-copy { }
+
+    .moment-copy .section-label { margin-bottom: 24px; }
+
+    .moment-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 3.5vw, 42px);
+      line-height: 1.2;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .moment-body {
+      font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.8;
+    }
+
+    /* FINAL CTA */
+    .final-cta {
+      background: var(--sage-faint);
+      padding: 120px 40px;
+      text-align: center;
+    }
+
+    .final-cta-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .final-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .final-headline em {
+      font-style: italic;
+      color: var(--sage);
+    }
+
+    .final-sub {
       font-size: 16px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
-      transition: opacity 0.2s;
+      color: var(--ink-soft);
+      margin-bottom: 40px;
+      line-height: 1.7;
     }
 
-    .btn:hover { opacity: 0.85; }
-
-    .error {
-      color: #c0392b;
-      font-size: 14px;
-      margin-top: 16px;
+    /* FOOTER */
+    footer {
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--cream-dark);
     }
 
-    .spinner {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      border: 3px solid #e5e0d8;
-      border-top-color: #6b8f71;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 16px;
+    .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--ink);
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .footer-logo span { color: var(--sage); }
+
+    .footer-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--ink); }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--ink-soft);
+      opacity: 0.5;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+
+      .hero { padding: 100px 24px 80px; }
+
+      .philosophy { padding: 80px 24px; }
+      .philosophy-grid { grid-template-columns: 1fr; gap: 40px; }
+
+      .beliefs { padding: 80px 24px; }
+      .beliefs-grid { grid-template-columns: 1fr; gap: 40px; }
+
+      .moment-section {
+        padding: 80px 24px;
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .final-cta { padding: 80px 24px; }
+
+      footer {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+        padding: 32px 24px;
+      }
+
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card" id="card">
-    <div class="spinner"></div>
-    <p>Confirming your account…</p>
-  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Zened<span>.</span></a>
+    <a href="#app-store-link" class="nav-link">Download</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">Your money, your moments</p>
+    <h1 class="hero-headline">Finance simplified<br>to <em>moments.</em></h1>
+    <p class="hero-sub">Most finance apps tell you what you spent. Zened asks you why.</p>
+    <div class="hero-cta">
+      <a href="YOUR_APP_STORE_LINK" id="app-store-link" class="btn-primary" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Download on the App Store
+      </a>
+      <span class="hero-caption">Free — iOS only</span>
+    </div>
+    <div class="scroll-line"></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <p class="section-label reveal">Why Zened exists</p>
+    <div class="philosophy-grid">
+      <div class="reveal">
+        <h2 class="philosophy-statement">Money is <em>emotional</em> before it's numerical.</h2>
+      </div>
+      <div class="philosophy-body reveal">
+        <p>Every transaction is rooted in a feeling — comfort, urgency, habit, or joy. Understanding your behaviour is the first step to changing it.</p>
+        <p>Zened doesn't judge your choices. It reflects them back to you, calmly, so you can see your own patterns clearly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BELIEFS -->
+  <section class="beliefs">
+    <div class="beliefs-inner">
+      <p class="section-label reveal">What we believe</p>
+      <div class="beliefs-grid">
+
+        <div class="belief-item reveal">
+          <div class="belief-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <h3 class="belief-title">Understand your behaviour</h3>
+          <p class="belief-text">Every spending moment is a data point about who you are. Zened surfaces cues and feelings so patterns become visible — not shameful, just honest.</p>
+        </div>
+
+        <div class="belief-item reveal">
+          <div class="belief-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3 class="belief-title">Simplify finance to moments</h3>
+          <p class="belief-text">No budgets. No spreadsheets. No scores. Just a quiet moment to log what happened and how it felt. That's it. That's the whole app.</p>
+        </div>
+
+        <div class="belief-item reveal">
+          <div class="belief-icon">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3 class="belief-title">No judgment, no noise</h3>
+          <p class="belief-text">Zened never tells you what to do with your money. It trusts you to draw your own conclusions once you can see the bigger picture.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MOMENT DEMO -->
+  <section class="moment-section">
+    <div class="moment-card reveal">
+      <span class="moment-tag">A moment</span>
+      <div class="moment-amount">£34.00</div>
+      <p class="moment-desc">Impulse buy — new trainers I didn't need</p>
+      <div class="moment-feelings">
+        <span class="feeling-chip">Comfort</span>
+        <span class="feeling-chip active">Impulse</span>
+        <span class="feeling-chip">Boredom</span>
+        <span class="feeling-chip">Habit</span>
+      </div>
+      <p class="moment-insight">
+        <strong>Pattern emerging —</strong> this is the third impulse moment this week linked to comfort. Usually happens after 9pm.
+      </p>
+    </div>
+    <div class="moment-copy">
+      <p class="section-label reveal">How it works</p>
+      <h2 class="moment-headline reveal">Log the moment.<br>See the pattern.</h2>
+      <p class="moment-body reveal">A moment is singular. It ends. When you look back at enough of them, something shifts — not your bank balance, but your understanding of yourself.</p>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="final-cta-inner">
+      <h2 class="final-headline reveal">Ready to understand <em>why</em> you spend?</h2>
+      <p class="final-sub reveal">Join the people already logging their moments and finding patterns they never knew existed.</p>
+      <div class="reveal">
+        <a href="YOUR_APP_STORE_LINK" class="btn-primary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Download on the App Store
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Zened<span>.</span></div>
+    <div class="footer-links">
+      <a href="https://zenedapp.com/privacy">Privacy</a>
+      <a href="mailto:team@zenedapp.com">Contact</a>
+    </div>
+    <p class="footer-copy">© 2025 Zened Ltd</p>
+  </footer>
 
   <script>
-    (function () {
-      var hash  = window.location.hash.substring(1);
-      var query = window.location.search.substring(1);
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-      function parseParams(str) {
-        var params = {};
-        str.split("&").forEach(function (pair) {
-          var parts = pair.split("=");
-          if (parts.length === 2) {
-            params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
-          }
-        });
-        return params;
-      }
-
-      var hashParams  = parseParams(hash);
-      var queryParams = parseParams(query);
-      var params = Object.keys(hashParams).length ? hashParams : queryParams;
-
-      var accessToken  = params["access_token"]  || params["token"];
-      var refreshToken = params["refresh_token"] || "";
-      var type         = params["type"]           || "signup";
-
-      function showError(msg) {
-        document.getElementById("card").innerHTML =
-          '<span class="icon">⚠️</span>' +
-          '<h1>Link expired</h1>' +
-          '<p>' + msg + '</p>' +
-          '<p class="error">Please sign up again or request a new confirmation email in the Zened app.</p>';
-      }
-
-      function showSuccess(deepLink) {
-        document.getElementById("card").innerHTML =
-          '<span class="icon">🌿</span>' +
-          '<h1>You\'re confirmed!</h1>' +
-          '<p>Your Zened account is ready. Tap below to open the app and begin reflecting.</p>' +
-          '<a class="btn" href="' + deepLink + '">Open Zened</a>';
-      }
-
-      if (!accessToken) {
-        showError("No confirmation token was found in this link.");
-        return;
-      }
-
-      var deepLink = "zened://confirm" +
-        "?access_token="  + encodeURIComponent(accessToken) +
-        "&refresh_token=" + encodeURIComponent(refreshToken) +
-        "&type="          + encodeURIComponent(type);
-
-      window.location.href = deepLink;
-
-      setTimeout(function () {
-        showSuccess(deepLink);
-      }, 800);
-    })();
+    reveals.forEach(el => observer.observe(el));
   </script>
+
 </body>
 </html>
