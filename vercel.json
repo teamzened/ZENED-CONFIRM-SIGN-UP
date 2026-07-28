@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/confirm",
+      "destination": "/confirm.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacypolicy.html"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/reset-password.html"
+    },
+    {
+      "source": "/support",
+      "destination": "/support.html"
+    }
+  ]
+}
