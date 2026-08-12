@@ -2,11 +2,11 @@
   "redirects": [
     { "source": "/confirm.html", "destination": "/confirm", "permanent": true },
     { "source": "/reset-password.html", "destination": "/reset-password", "permanent": true },
-    { "source": "/privacy.html", "destination": "/privacy", "permanent": true }
+    { "source": "/privacypolicy.html", "destination": "/privacypolicy", "permanent": true }
   ],
   "rewrites": [
     { "source": "/confirm", "destination": "/confirm.html" },
     { "source": "/reset-password", "destination": "/reset-password.html" },
-    { "source": "/privacy", "destination": "/privacy.html" }
+    { "source": "/privacypolicy", "destination": "/privacypolicy.html" }
   ]
 }
