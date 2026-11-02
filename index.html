@@ -693,7 +693,7 @@
     </div>
   </section>
 
- <!-- FOOTER -->
+<!-- FOOTER -->
 <footer>
   <span class="footer-logo">Zened.</span>
   <div class="footer-links">
@@ -704,54 +704,42 @@
   <p class="footer-legal">Registered in England and Wales. Company registration number: 17343863.<br>Registered address: Suite A, 82 James Carter Road, Mildenhall, Bury St. Edmunds, England, IP28 7DE</p>
 </footer>
 <style>footer{flex-wrap:wrap;}.footer-legal{flex-basis:100%;width:100%;margin:12px 0 0;font-size:0.8rem;line-height:1.5;color:#ffffff;text-align:center;}</style>
-   
-    // Nav colour shift on scroll
-    const nav = document.getElementById('nav');
-    const navLogo = document.getElementById('navLogo');
-    const navDl = document.getElementById('navDl');
 
-    window.addEventListener('scroll', () => {
-      const heroH = document.querySelector('.hero').offsetHeight;
-      if (window.scrollY > heroH - 80) {
-        nav.style.background = 'rgba(247,243,238,0.92)';
-        nav.style.backdropFilter = 'blur(12px)';
-        navLogo.classList.add('dark');
-        navDl.classList.add('dark');
-      } else {
-        nav.style.background = 'transparent';
-        nav.style.backdropFilter = 'none';
-        navLogo.classList.remove('dark');
-        navDl.classList.remove('dark');
+<script>
+  // Nav colour shift on scroll
+  const nav = document.getElementById('nav');
+  const navLogo = document.getElementById('navLogo');
+  const navDl = document.getElementById('navDl');
+
+  window.addEventListener('scroll', () => {
+    const heroH = document.querySelector('.hero').offsetHeight;
+    if (window.scrollY > heroH - 80) {
+      nav.style.background = 'rgba(247,243,238,0.92)';
+      nav.style.backdropFilter = 'blur(12px)';
+      navLogo.classList.add('dark');
+      navDl.classList.add('dark');
+    } else {
+      nav.style.background = 'transparent';
+      nav.style.backdropFilter = 'none';
+      navLogo.classList.remove('dark');
+      navDl.classList.remove('dark');
+    }
+  }, { passive: true });
+
+  // Word-by-word reveal on statement lines
+  const wordObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const words = entry.target.querySelectorAll('.word');
+        words.forEach((w, i) => {
+          setTimeout(() => w.classList.add('visible'), i * 80);
+        });
+        wordObserver.unobserve(entry.target);
       }
-    }, { passive: true });
+    });
+  }, { threshold: 0.3 });
 
-    // Word-by-word reveal on statement lines
-    const wordObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const words = entry.target.querySelectorAll('.word');
-          words.forEach((w, i) => {
-            setTimeout(() => w.classList.add('visible'), i * 80);
-          });
-          wordObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.3 });
-
-    document.querySelectorAll('.statement-line').forEach(el => wordObserver.observe(el));
-
-    // General scroll reveal
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-  </script>
-
+  document.querySelectorAll('.statement-line').forEach(el => wordObserver.observe(el));
+</script>
 </body>
 </html>
